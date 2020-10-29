@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="utf-8">
+      <title>wheel</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.3/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+      <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200&family=Commissioner&display=swap" rel="stylesheet">    <style>
+    * {
+      box-sizing: border-box;
+      top: 0;
+      left: 0;
+      font-family: 'Cairo', sans-serif;
+font-family: 'Commissioner', sans-serif;
+width: 100%;
+}
+
+/* body {
+    background-image: url("https://ew1rnkpr02250stogros.blob.core.windows.net/media/Grosvenor/sideGames/Background/live-casino-default-background-gc-game-background-1280x800-v4-2.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+    height: 100vh;
+} */
+
+text{
+    cursor: pointer;
+    font-size: 20px;
+    font-family: 'Cairo', sans-serif;
+font-family: 'Commissioner', sans-serif;
+flex-wrap: nowrap;
+    /* text-shadow: 2px 2px 0px rgba(68, 38, 38, 0.8); */
+}
+#chart{
+    position:absolute;
+    width: 500px;
+    height: 500px;
+    top: 200px;
+    left: 200px;
+}
+#number{
+    position: absolute;
+    width: 400px;
+    height: 500px;
+    top: 0;
+    left: 520px;
+}
+
+h2 {
+    font-size: 50px;
+    text-align: center;
+    font-style: normal;
+    color: black;
+    /* text-shadow: 2px 2px 0px rgba(255,255,255,0.8); */
+}
+
+h3 {
+    font-size: 25px;
+    position: absolute;
+    top: 90%;
+    right: 2%;
+    font-style: normal;
+    color: black;
+}
+
+#number h1{
+    font-size: 50px;
+    width: 500px;
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    top: 92%;
+    left: 50%;
+    transform:translate(0,-50%);
+    color: black;
+}
+
+.blink {
+    animation: blinker 2s infinite;
+    font-size: 75px;
+    line-height: 100px;
+}
+
+@keyframes blinker {
+    0% {
+        color: #fff;
+    }
+    25% {
+        color: #00f;
+    }
+    50% {
+        color: #f0f;
+    }
+    75% {
+        color: #0ff;
+    }
+    100% {
+        color: #ff0;
+    }
+}
+
+    </style>
+          <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+      <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+      <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.3/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+  </head>
+  <body>
+      <!-- <h2>welcome to the </br><span class="blink">WHEEL OF NAME</span></h2> -->
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 ">
+            <div id="chart"></div>
+            <div id="number"><h1></h1></div>
+          </div>
+          <div class="col-md-4"></div>
+          <div class="col-md-4"></div>
+
+        </div>
+      </div>
+      
+      <!-- <h3>click SPIN or press any key to start the game</h3> -->
+  <script src="js/script.js"></script>
+  <script>
+var padding = {
+    top:20, right:20, bottom:0, left:0
+},
+w = 500 - padding.left - padding.right,
+h = 500 - padding.top - padding.bottom,
+r = Math.min(w, h)/2,
+roatation = 0,
+oldrotation = 0,
+picked = 100000,
+oldpick = [],
+color = d3.scale.category20();
+
+var data = [
+            {"label":"saif",  "value":1,  "number":" YOU WIN saif!"},
+            {"label":"ahmed",  "value":1,  "number":" YOU WIN ahmed!"},
+            {"label":"omar",  "value":1,  "number":" YOU WIN omar!"},
+            {"label":"josef",  "value":1,  "number":" YOU WIN josef!"},
+            {"label":"mark",  "value":1,  "number":" YOU WIN mark!"},
+            {"label":"aaa",  "value":1,  "number":" YOU WIN  aaa!"},
+            {"label":"dark",  "value":1,  "number":" YOU WIN dark!"},
+            {"label":"zaz",  "value":1,  "number":" YOU WIN zaz!"},
+
+
+
+];
+
+var svg = d3.select("#chart")
+    .append("svg")
+    .data([data])
+    .attr("width", w + padding.left + padding.right)
+    .attr("height", h + padding.top + padding.bottom)
+;
+
+var container = svg.append("g")
+    .attr("class", "chartholder")
+    .attr("transform", "translate(" + (w/2 + padding.left) + "," + (h/2 + padding.top) + ")")
+;
+
+var vis = container
+    .append("g")
+;
+
+var pie = d3.layout.pie().sort(null).value(function(d){return 1;});
+
+var arc = d3.svg.arc().outerRadius(r);
+
+var arcs = vis.selectAll("g.slice")
+    .data(pie)
+    .enter()
+    .append("g")
+    .attr("class", "slice")
+;
+
+arcs.append("path")
+    .attr("fill", function(d, i){ return color(i); })
+    .attr("d", function (d) { return arc(d); });
+
+arcs.append("text").attr("transform", function(d){
+        d.innerRadius = 0;
+        d.outerRadius = r;
+        d.angle = (d.startAngle + d.endAngle)/2;
+        return "rotate(" + (d.angle * 180 / Math.PI - 88) + ")translate(" + (d.outerRadius -60) +")";
+    })
+    .attr("text-anchor", "end")
+    .text( function(d, i) {
+        return data[i].label;
+    });
+
+container.on("click", spin);
+$("body").keypress(spin);
+
+
+function spin(d){
+
+    container.on("click", null);
+
+
+    var  ps       = 360/data.length,
+         pieslice = Math.round(1440/data.length),
+         rng      = Math.floor((Math.random() * 1440) + 360);
+
+    rotation = (Math.round(rng / ps) * ps);
+
+    picked = Math.round(data.length - (rotation % 360)/ps);
+    picked = picked >= data.length ? (picked % data.length) : picked;
+
+
+    if(oldpick.indexOf(picked) !== -1){
+        d3.select(this).call(spin);
+        return;
+    } else {
+        oldpick.push(picked);
+    }
+
+    rotation += 90 - Math.round(ps/2);
+
+    vis.transition()
+        .duration(3000)
+        .attrTween("transform", rotTween)
+        .each("end", function(){
+
+
+            d3.select("#number h1")
+                .text(data[picked].number);
+
+            oldrotation = rotation;
+
+            container.on("click", spin);
+        });
+}
+
+svg.append("g")
+    .attr("transform", "translate(" + (w + padding.left + padding.right) + "," + ((h/2)+padding.top) + ")")
+    .append("path")
+    .attr("d", "M-" + (r*.30) + ",0L0," + (r*.05) + "L0,-" + (r*.05) + "Z")
+    .style({"fill":"black", "opacity":"0.8"});
+
+container.append("circle")
+    .attr("cx", 0)
+    .attr("cy", 0)
+    .attr("r", 50)
+    .style({"fill":"white","cursor":"pointer","position":"relative" });
+
+container.append("text")
+    .attr("x", 0)
+    .attr("y", 10)
+    .attr("text-anchor", "middle")
+    .text("CLICK TO SPIN")
+    .style({"font-weight":"bold", "font-size":"15px","text-anchor":"middle"});
+
+
+function rotTween(to) {
+  var i = d3.interpolate(oldrotation % 360, rotation);
+  return function(t) {
+    return "rotate(" + i(t) + ")";
+  };
+}
+
+
+function getRandomNumbers(){
+    var array = new Uint16Array(1000);
+    var scale = d3.scale.linear().range([360, 1440]).domain([0, 100000]);
+
+    if(window.hasOwnProperty("crypto") && typeof window.crypto.getRandomValues === "function"){
+        window.crypto.getRandomValues(array);
+    } else {
+        //no support for crypto, get crappy random numbers
+        for(var i=0; i < 1000; i++){
+            array[i] = Math.floor(Math.random() * 100000) + 1;
+        }
+    }
+
+    return array;
+}
+
+</script>
+  </body>
+</html>
+
